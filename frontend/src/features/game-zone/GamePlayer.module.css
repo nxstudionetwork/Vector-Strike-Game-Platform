@@ -1,0 +1,247 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  animation: enter var(--dur-med) var(--ease-out);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  height: 56px;
+  padding: env(safe-area-inset-top) var(--gutter) 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-glass);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.exit {
+  display: grid;
+  place-items: center;
+  width: var(--touch);
+  height: var(--touch);
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.stage {
+  flex: 1;
+  overflow: auto;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.error {
+  padding: var(--sp-8);
+  text-align: center;
+  color: var(--danger);
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-4);
+  max-width: 560px;
+  margin: 0 auto;
+  padding: var(--sp-8) var(--gutter);
+}
+
+.burst {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: var(--brand-gradient);
+  color: #fff;
+  box-shadow: 0 0 60px rgba(124, 92, 255, 0.55);
+}
+
+.rejectIcon {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.resultTitle {
+  font-size: var(--fs-3xl);
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.resultStats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-3);
+  width: 100%;
+}
+
+.resultStats div {
+  flex: 1 1 120px;
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-3);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.resultStats span {
+  font-size: var(--fs-xs);
+  color: var(--text-subtle);
+}
+
+.resultStats strong {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+}
+
+.rewards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-3);
+}
+
+.rewardXp,
+.rewardCoins {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-5);
+  border-radius: var(--r-pill);
+  font-weight: 700;
+}
+
+.rewardXp {
+  background: var(--accent-soft);
+  color: var(--brand-cyan);
+}
+
+.rewardCoins {
+  background: var(--warning-soft);
+  color: var(--coin);
+}
+
+.rewardXp strong,
+.rewardCoins strong {
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+}
+
+.rewardXp span,
+.rewardCoins span {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.highlights {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-2);
+}
+
+.highlights li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.levelUp {
+  background: var(--brand-gradient) !important;
+  color: #fff;
+  border-color: transparent !important;
+}
+
+.unlocks {
+  width: 100%;
+  text-align: start;
+}
+
+.unlocks h3 {
+  font-size: var(--fs-lg);
+  margin-bottom: var(--sp-3);
+  text-align: center;
+}
+
+.unlocks ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.unlocks li {
+  --rarity: var(--rarity-common);
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+  padding: var(--sp-3);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--rarity) 50%, transparent);
+}
+
+.unlocks li > span {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--rarity);
+}
+
+.unlocks p {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.resultActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-3);
+  margin-top: var(--sp-2);
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}

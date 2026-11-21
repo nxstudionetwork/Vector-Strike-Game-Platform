@@ -1,0 +1,112 @@
+.badge {
+  --rarity: var(--rarity-common);
+  display: flex;
+  gap: var(--sp-4);
+  height: 100%;
+  padding: var(--sp-4);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition:
+    transform var(--dur-med) var(--ease-out),
+    border-color var(--dur-med);
+}
+
+.unlocked {
+  border-color: color-mix(in srgb, var(--rarity) 45%, transparent);
+  background: linear-gradient(140deg, color-mix(in srgb, var(--rarity) 12%, var(--surface)), var(--surface) 60%);
+}
+
+.unlocked:hover {
+  transform: translateY(-2px);
+}
+
+.medal {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  color: var(--rarity);
+  background: color-mix(in srgb, var(--rarity) 16%, transparent);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--rarity) 50%, transparent);
+}
+
+.unlocked .medal {
+  color: #fff;
+  background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--rarity) 90%, #fff), var(--rarity));
+  box-shadow: 0 0 22px color-mix(in srgb, var(--rarity) 45%, transparent);
+}
+
+.locked .medal {
+  filter: grayscale(0.7);
+  opacity: 0.75;
+}
+
+.compact .medal {
+  width: 46px;
+  height: 46px;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.title {
+  font-size: var(--fs-md);
+}
+
+.rarity {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rarity);
+}
+
+.desc {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--success);
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: 4px;
+  font-size: var(--fs-xs);
+  color: var(--text-subtle);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.reward {
+  align-self: flex-start;
+  margin-top: 2px;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--brand-cyan);
+}

@@ -1,0 +1,248 @@
+.hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--sp-5);
+  align-items: center;
+  padding: clamp(20px, 3vw, 32px);
+  border-radius: var(--r-xl);
+  background:
+    radial-gradient(600px 260px at 100% 0%, rgba(124, 92, 255, 0.3), transparent 70%),
+    var(--surface);
+  border: 1px solid var(--border);
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  min-width: 0;
+}
+
+.name {
+  font-size: var(--fs-3xl);
+  overflow-wrap: anywhere;
+}
+
+.tagRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.tagLabel {
+  font-size: var(--fs-xs);
+  color: var(--text-subtle);
+  font-weight: 600;
+}
+
+.tag {
+  padding: 2px 10px;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.copy {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-muted);
+}
+.copy:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.meta {
+  color: var(--text-subtle);
+  font-size: var(--fs-sm);
+}
+
+.level {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-top: var(--sp-1);
+  max-width: 420px;
+}
+
+.levelBadge {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border-radius: var(--r-pill);
+  background: var(--brand-gradient);
+  color: #fff;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+}
+
+.levelBar {
+  flex: 1;
+}
+
+.editBtn {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.privacy {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: calc(var(--sp-4) * -1);
+  color: var(--text-subtle);
+  font-size: var(--fs-sm);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-3);
+}
+
+.interests {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.interest {
+  --c: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid color-mix(in srgb, var(--c) 50%, transparent);
+  background: color-mix(in srgb, var(--c) 12%, var(--surface));
+  color: var(--text);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  text-decoration: none !important;
+}
+
+.interest svg {
+  color: var(--c);
+}
+
+.prefs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-6);
+  margin: 0;
+}
+
+.prefs dt {
+  font-size: var(--fs-xs);
+  color: var(--text-subtle);
+  font-weight: 600;
+}
+
+.prefs dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.badges {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+}
+
+.link {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  color: var(--text);
+}
+
+.avatarSet {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.avatarSet legend {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  margin-bottom: var(--sp-2);
+  padding: 0;
+}
+
+.avatarGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: var(--sp-2);
+}
+
+.avatarOption {
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  border-radius: 18px;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.avatarOption:focus-within {
+  outline: 3px solid var(--focus);
+}
+
+.avatarActive {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.chipGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  color: var(--text);
+}
+
+@media (max-width: 479px) {
+  .hero {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+}
+
+@media (min-width: 640px) {
+  .stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .hero {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  .editBtn {
+    grid-column: auto;
+    align-self: start;
+  }
+}

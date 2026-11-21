@@ -1,0 +1,49 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+.mark {
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.animated .v {
+  transform-origin: 50% 60%;
+  animation: rise 900ms var(--ease-out) both;
+}
+
+.animated .strike {
+  animation: strike 700ms 450ms var(--ease-spring) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes strike {
+  from {
+    opacity: 0;
+    transform: translate(-18px, 18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

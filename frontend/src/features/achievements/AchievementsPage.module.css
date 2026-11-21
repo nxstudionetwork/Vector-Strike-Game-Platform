@@ -1,0 +1,33 @@
+.grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+}
+
+.summaryIcon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: var(--warning-soft);
+  color: var(--coin);
+  flex-shrink: 0;
+}
+
+.summaryText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  flex: 1;
+  min-width: 0;
+}

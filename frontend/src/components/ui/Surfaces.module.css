@@ -1,0 +1,129 @@
+.card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  min-width: 0;
+}
+
+.padded {
+  padding: clamp(16px, 2.2vw, 24px);
+}
+
+.glow {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    var(--brand-gradient) border-box;
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  min-width: 0;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+
+.sectionTitle {
+  font-size: var(--fs-xl);
+}
+
+.sectionSubtitle {
+  margin-top: 4px;
+  color: var(--text-subtle);
+  font-size: var(--fs-sm);
+}
+
+.sectionAction {
+  flex-shrink: 0;
+}
+
+.pageHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+
+.pageTitle {
+  font-size: var(--fs-3xl);
+}
+
+.pageSubtitle {
+  margin-top: var(--sp-2);
+  color: var(--text-muted);
+  max-width: 60ch;
+}
+
+.stat {
+  --tone: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  min-width: 0;
+}
+
+.tone_accent {
+  --tone: var(--brand-cyan);
+}
+.tone_violet {
+  --tone: var(--brand-violet);
+}
+.tone_pink {
+  --tone: var(--brand-pink);
+}
+.tone_gold {
+  --tone: var(--coin);
+}
+.tone_green {
+  --tone: var(--success);
+}
+
+.statIcon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  color: var(--tone);
+  background: color-mix(in srgb, var(--tone) 16%, transparent);
+}
+
+.statText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.statValue {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-xl);
+  line-height: 1.1;
+}
+
+.statLabel {
+  font-size: var(--fs-xs);
+  line-height: 1.3;
+  color: var(--text-subtle);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

@@ -7,7 +7,9 @@
  *   /forgot-password /reset-password
  *   /terms /privacy            public
  *   /onboarding                signed in, onboarding not yet required
- *   /home /game-zone …         signed in + onboarded, inside the app shell
+ *   /home /game-zone /challenge /progress /stats /achievements
+ *   /favorites /profile /settings /notifications /help /accessibility
+ *                              signed in + onboarded, inside the app shell
  */
 import { lazy, Suspense, type ReactNode } from 'react'
 import { createBrowserRouter, Outlet } from 'react-router-dom'
@@ -33,6 +35,11 @@ const AchievementsPage = lazy(() => import('@/features/achievements/Achievements
 const ProfilePage = lazy(() => import('@/features/profile/ProfilePage'))
 const SettingsPage = lazy(() => import('@/features/settings/SettingsPage'))
 const NotificationsPage = lazy(() => import('@/features/notifications/NotificationsPage'))
+const ChallengePage = lazy(() => import('@/features/challenge/ChallengePage'))
+const StatsPage = lazy(() => import('@/features/stats/StatsPage'))
+const FavoritesPage = lazy(() => import('@/features/favorites/FavoritesPage'))
+const HelpPage = lazy(() => import('@/features/support/HelpPage'))
+const AccessibilityPage = lazy(() => import('@/features/support/AccessibilityPage'))
 const NotFoundPage = lazy(() => import('./NotFoundPage'))
 
 const page = (node: ReactNode) => <Suspense fallback={<PageLoader />}>{node}</Suspense>
@@ -70,7 +77,12 @@ export const router = createBrowserRouter([
               { path: '/game-zone', element: page(<GameZonePage />) },
               { path: '/game-zone/category/:slug', element: page(<CategoryPage />) },
               { path: '/game/:slug', element: page(<GamePage />) },
+              { path: '/challenge', element: page(<ChallengePage />) },
               { path: '/progress', element: page(<ProgressPage />) },
+              { path: '/stats', element: page(<StatsPage />) },
+              { path: '/favorites', element: page(<FavoritesPage />) },
+              { path: '/help', element: page(<HelpPage />) },
+              { path: '/accessibility', element: page(<AccessibilityPage />) },
               { path: '/achievements', element: page(<AchievementsPage />) },
               { path: '/profile', element: page(<ProfilePage />) },
               { path: '/settings', element: page(<SettingsPage />) },

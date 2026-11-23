@@ -29,6 +29,14 @@ python manage.py runserver 127.0.0.1:8000
 python manage.py test apps      # run the backend test suite
 ```
 
+**Explore with demo data (development only).** This creates a demo account, six games labelled "(demo)" (they can't be launched because they have no gameplay module), a daily challenge and real progress made through the progression engine:
+
+```bash
+# set DEMO_PASSWORD in backend/.env first (see .env.example)
+python manage.py seed_demo          # log in as demo@vectorstrike.test
+python manage.py seed_demo --clear  # remove it again
+```
+
 For PostgreSQL, run `docker compose up -d db` and set
 `DATABASE_URL=postgres://vectorstrike:vectorstrike@localhost:5432/vectorstrike`.
 
@@ -66,6 +74,22 @@ frontend/src/
   i18n/           all user-facing copy (locales/en.json)
   styles/         design tokens (themes, a11y overrides) + global CSS
 ```
+
+### App shell (Phase 2)
+- **Header:** the brand (links to Home), a sidebar toggle, global search (press `/`), streak and level, the notification panel and the profile menu. On phones, search opens as a sheet.
+- **Sidebar:** grouped into Main (Home, Game Zone, Daily Challenge), Progress (Progress, Achievements, Stats) and Personal (Favourites, Profile, Settings). It can be collapsed to icons with tooltips, and each device remembers the choice.
+- **Phones:** a bottom bar (Home · Games · Challenge · Progress · More). More opens a sheet with the remaining sections, Help and Log out.
+- **Shared components:** `components/layout/*`, `components/game/{GameCard,CategoryCard}`, `components/ui/*` (including `XPBar`), `components/feedback/{Toast,ConfirmDialog}`.
+- **Adding a section:** add a single entry to `components/layout/navItems.tsx`.
+
+| Route | Page |
+|---|---|
+| `/home` | Dashboard: welcome + XP + daily goal, continue playing, daily challenge, Game Zone, recommended, achievements, progress, discover |
+| `/game-zone` · `/game-zone/category/:slug` · `/game/:slug` | Worlds, games (filters: All, Recommended, New, Popular, In progress, Completed, Favourites), world progress, pre-game screen |
+| `/challenge` | Today's challenge, recent history, rules |
+| `/progress` · `/stats` · `/achievements` | Level and activity · detailed stats · All / Unlocked / In progress / Locked |
+| `/favorites` · `/profile` · `/settings` | Saved games · player identity + editing · grouped settings |
+| `/notifications` · `/help` · `/accessibility` | Full notification list · FAQ · accessibility statement |
 
 ### Authentication
 - Email + password. Passwords are hashed by Django and checked against its password validators.

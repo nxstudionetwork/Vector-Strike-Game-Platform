@@ -121,6 +121,7 @@ REST_FRAMEWORK = {
         "auth": "20/min",
         "password_reset": "5/hour",
         "play": "120/min",
+        "search": "60/min",
     },
     "EXCEPTION_HANDLER": "apps.accounts.exceptions.api_exception_handler",
 }

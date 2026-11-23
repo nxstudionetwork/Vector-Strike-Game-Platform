@@ -150,6 +150,7 @@ class PlayerSettings(models.Model):
     notify_achievements = models.BooleanField(default=True)
     notify_daily_challenge = models.BooleanField(default=True)
     notify_streak = models.BooleanField(default=True)
+    notify_platform = models.BooleanField(default=True, help_text="New games and platform announcements")
     # Privacy: profiles are private by default. Future social features must respect this.
     profile_visible = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True)

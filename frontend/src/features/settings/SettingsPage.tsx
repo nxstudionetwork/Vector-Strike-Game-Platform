@@ -1,18 +1,21 @@
 /**
- * Settings save immediately on change (optimistic), with a visible status.
- * Sections: profile, account, privacy, notifications, language & region,
- * accessibility & display, sound, gameplay, security.
+ * Settings, grouped into cards. Changes save immediately (optimistic) and are
+ * confirmed with a toast; failures roll back.
+ * Groups: Account · Appearance · Gameplay · Accessibility · Notifications ·
+ * Language & region · Privacy · Account actions.
  */
-import { useState, type FormEvent, type ReactNode } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { CheckCircle2, ChevronRight, KeyRound, LogOut, Trash2 } from 'lucide-react'
+import { ChevronRight, KeyRound, LogOut, Trash2 } from 'lucide-react'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { Segmented, Switch } from '@/components/ui/Controls'
 import { FormError, PasswordField, SelectField } from '@/components/ui/Field'
 import { Modal } from '@/components/ui/Modal'
 import { Card, PageHeader } from '@/components/ui/Surfaces'
+import { useConfirm } from '@/components/feedback/ConfirmDialog'
+import { useToast } from '@/components/feedback/Toast'
 import { useAuth, useUser } from '@/features/auth/AuthProvider'
 import { SUPPORTED_LANGUAGES } from '@/i18n'
 import { ApiError } from '@/lib/api/client'
@@ -23,7 +26,7 @@ import styles from './SettingsPage.module.css'
 
 function Group({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
-    <Card className={styles.group} aria-labelledby={`${id}-h`} role="region">
+    <Card className={styles.group} aria-labelledby={`${id}-h`} role="region" id={id}>
       <h2 id={`${id}-h`} className={styles.groupTitle}>
         {title}
       </h2>
@@ -37,52 +40,44 @@ export default function SettingsPage() {
   const user = useUser()
   const { setUser, logout } = useAuth()
   const navigate = useNavigate()
+  const { hash } = useLocation()
+  const toast = useToast()
+  const confirm = useConfirm()
   const s = user.settings
-  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
-  const [error, setError] = useState<string>()
   const [modal, setModal] = useState<'password' | 'delete' | null>(null)
   const isChild = user.profile.age_group === 'child'
   const deviceTz = deviceTimezone()
 
+  // Deep links such as /settings#s-a11y scroll to that group.
+  useEffect(() => {
+    if (hash) document.getElementById(hash.slice(1))?.scrollIntoView({ block: 'start' })
+  }, [hash])
+
   async function update(patch: Partial<PlayerSettings>) {
     const previous = user
     setUser({ ...user, settings: { ...s, ...patch } })
-    setStatus('saving')
-    setError(undefined)
     try {
       setUser(await meApi.updateSettings(patch))
-      setStatus('saved')
+      toast.success(t('toast.settingsSaved'))
     } catch (err) {
       setUser(previous)
-      setStatus('error')
-      setError(err instanceof ApiError ? err.message : t('errors.generic'))
+      toast.error(err instanceof ApiError ? err.message : t('errors.generic'))
     }
   }
 
   async function onLogout() {
+    const ok = await confirm({ title: t('settings.logout'), body: t('settings.logoutBody'), confirmLabel: t('settings.logout') })
+    if (!ok) return
     await logout()
     navigate('/welcome', { replace: true })
   }
 
   return (
     <>
-      <PageHeader
-        title={t('settings.title')}
-        action={
-          <span className={styles.status} aria-live="polite">
-            {status === 'saving' && t('common.saving')}
-            {status === 'saved' && (
-              <>
-                <CheckCircle2 size={16} aria-hidden="true" /> {t('settings.updated')}
-              </>
-            )}
-          </span>
-        }
-      />
-      <FormError message={error} />
+      <PageHeader title={t('settings.title')} />
 
       <div className={styles.columns}>
-        <Group id="s-profile" title={t('settings.sections.profile')}>
+        <Group id="s-account" title={t('settings.groups.account')}>
           <Link to="/profile" className={styles.rowLink}>
             <Avatar avatar={user.profile.avatar} size={44} />
             <span className={styles.rowText}>
@@ -91,9 +86,6 @@ export default function SettingsPage() {
             </span>
             <ChevronRight size={18} aria-hidden="true" />
           </Link>
-        </Group>
-
-        <Group id="s-account" title={t('settings.sections.account')}>
           <dl className={styles.facts}>
             <div>
               <dt>{t('settings.email')}</dt>
@@ -105,50 +97,13 @@ export default function SettingsPage() {
             </div>
           </dl>
           <p className={styles.note}>{t('settings.emailNote')}</p>
+          <div className={styles.subhead}>{t('settings.security')}</div>
+          <Button variant="secondary" icon={<KeyRound size={18} aria-hidden="true" />} onClick={() => setModal('password')} className={styles.start}>
+            {t('settings.changePassword')}
+          </Button>
         </Group>
 
-        <Group id="s-privacy" title={t('settings.sections.privacy')}>
-          <Switch
-            label={t('settings.profileVisible')}
-            description={isChild ? t('settings.profileVisibleChild') : t('settings.profileVisibleHint')}
-            checked={s.profile_visible}
-            disabled={isChild}
-            onChange={(v) => update({ profile_visible: v })}
-          />
-          <p className={styles.note}>
-            <Link to="/privacy">{t('legal.privacyTitle')}</Link>
-          </p>
-        </Group>
-
-        <Group id="s-notifications" title={t('settings.sections.notifications')}>
-          <Switch label={t('settings.notifyAchievements')} checked={s.notify_achievements} onChange={(v) => update({ notify_achievements: v })} />
-          <Switch label={t('settings.notifyDaily')} checked={s.notify_daily_challenge} onChange={(v) => update({ notify_daily_challenge: v })} />
-          <Switch label={t('settings.notifyStreak')} checked={s.notify_streak} onChange={(v) => update({ notify_streak: v })} />
-          <p className={styles.note}>{t('settings.notifyNote')}</p>
-        </Group>
-
-        <Group id="s-language" title={t('settings.sections.language')}>
-          <SelectField label={t('settings.language')} hint={t('settings.languageNote')} value={s.language} onChange={(e) => update({ language: e.target.value })}>
-            {SUPPORTED_LANGUAGES.map((l) => (
-              <option key={l.code} value={l.code}>
-                {l.nativeName}
-              </option>
-            ))}
-          </SelectField>
-          <div className={styles.tzRow}>
-            <p className={styles.tzValue}>
-              <strong>{t('settings.timezone')}:</strong> {s.timezone}
-            </p>
-            <p className={styles.note}>{t('settings.timezoneHint')}</p>
-            {s.timezone !== deviceTz && (
-              <Button variant="secondary" size="sm" onClick={() => update({ timezone: deviceTz })}>
-                {t('settings.useDeviceTimezone', { tz: deviceTz })}
-              </Button>
-            )}
-          </div>
-        </Group>
-
-        <Group id="s-a11y" title={t('settings.sections.accessibility')}>
+        <Group id="s-appearance" title={t('settings.groups.appearance')}>
           <Segmented
             label={t('settings.theme')}
             value={s.theme}
@@ -156,21 +111,14 @@ export default function SettingsPage() {
             options={(['system', 'dark', 'light'] as const).map((v) => ({ value: v, label: t(`settings.themes.${v}`) }))}
           />
           <Segmented
-            label={t('settings.motion')}
-            value={s.motion}
-            onChange={(v) => update({ motion: v })}
-            options={(['system', 'reduced', 'full'] as const).map((v) => ({ value: v, label: t(`settings.motions.${v}`) }))}
-          />
-          <Segmented
             label={t('settings.textSize')}
             value={s.text_size}
             onChange={(v) => update({ text_size: v })}
             options={(['default', 'large', 'xlarge'] as const).map((v) => ({ value: v, label: t(`settings.textSizes.${v}`) }))}
           />
-          <Switch label={t('settings.highContrast')} checked={s.high_contrast} onChange={(v) => update({ high_contrast: v })} />
         </Group>
 
-        <Group id="s-sound" title={t('settings.sections.sound')}>
+        <Group id="s-gameplay" title={t('settings.groups.gameplay')}>
           <Switch label={t('settings.soundEffects')} checked={s.sound_effects} onChange={(v) => update({ sound_effects: v })} />
           <Switch label={t('settings.music')} checked={s.music} onChange={(v) => update({ music: v })} />
           <label className={styles.range}>
@@ -188,18 +136,67 @@ export default function SettingsPage() {
               disabled={!s.sound_effects && !s.music}
             />
           </label>
+          <Switch label={t('settings.showHints')} checked={s.show_hints} onChange={(v) => update({ show_hints: v })} />
+          <Switch label={t('settings.showTimers')} checked={s.show_timers} onChange={(v) => update({ show_timers: v })} />
           <p className={styles.note}>{t('settings.soundNote')}</p>
         </Group>
 
-        <Group id="s-gameplay" title={t('settings.sections.gameplay')}>
-          <Switch label={t('settings.showHints')} checked={s.show_hints} onChange={(v) => update({ show_hints: v })} />
-          <Switch label={t('settings.showTimers')} checked={s.show_timers} onChange={(v) => update({ show_timers: v })} />
+        <Group id="s-a11y" title={t('settings.groups.accessibility')}>
+          <Segmented
+            label={t('settings.motion')}
+            value={s.motion}
+            onChange={(v) => update({ motion: v })}
+            options={(['system', 'reduced', 'full'] as const).map((v) => ({ value: v, label: t(`settings.motions.${v}`) }))}
+          />
+          <Switch label={t('settings.highContrast')} checked={s.high_contrast} onChange={(v) => update({ high_contrast: v })} />
+          <p className={styles.note}>
+            <Link to="/accessibility">{t('footer.accessibility')}</Link>
+          </p>
         </Group>
 
-        <Group id="s-security" title={t('settings.sections.security')}>
-          <Button variant="secondary" icon={<KeyRound size={18} aria-hidden="true" />} onClick={() => setModal('password')}>
-            {t('settings.changePassword')}
-          </Button>
+        <Group id="s-notifications" title={t('settings.groups.notifications')}>
+          <Switch label={t('settings.notifyAchievements')} checked={s.notify_achievements} onChange={(v) => update({ notify_achievements: v })} />
+          <Switch label={t('settings.notifyDaily')} checked={s.notify_daily_challenge} onChange={(v) => update({ notify_daily_challenge: v })} />
+          <Switch label={t('settings.notifyStreak')} checked={s.notify_streak} onChange={(v) => update({ notify_streak: v })} />
+          <Switch label={t('settings.notifyPlatform')} checked={s.notify_platform} onChange={(v) => update({ notify_platform: v })} />
+          <p className={styles.note}>{t('settings.notifyNote')}</p>
+        </Group>
+
+        <Group id="s-language" title={t('settings.groups.language')}>
+          <SelectField label={t('settings.language')} hint={t('settings.languageNote')} value={s.language} onChange={(e) => update({ language: e.target.value })}>
+            {SUPPORTED_LANGUAGES.map((l) => (
+              <option key={l.code} value={l.code}>
+                {l.nativeName}
+              </option>
+            ))}
+          </SelectField>
+          <div className={styles.tzRow}>
+            <p className={styles.tzValue}>
+              <strong>{t('settings.timezone')}:</strong> {s.timezone}
+            </p>
+            <p className={styles.note}>{t('settings.timezoneHint')}</p>
+            {s.timezone !== deviceTz && (
+              <Button variant="secondary" size="sm" className={styles.wrapButton} onClick={() => update({ timezone: deviceTz })}>
+                {t('settings.useDeviceTimezone', { tz: deviceTz })}
+              </Button>
+            )}
+          </div>
+        </Group>
+
+        <Group id="s-privacy" title={t('settings.groups.privacy')}>
+          <Switch
+            label={t('settings.profileVisible')}
+            description={isChild ? t('settings.profileVisibleChild') : t('settings.profileVisibleHint')}
+            checked={s.profile_visible}
+            disabled={isChild}
+            onChange={(v) => update({ profile_visible: v })}
+          />
+          <p className={styles.note}>
+            <Link to="/privacy">{t('legal.privacyTitle')}</Link>
+          </p>
+        </Group>
+
+        <Group id="s-actions" title={t('settings.groups.actions')}>
           <div className={styles.dangerRow}>
             <div>
               <strong>{t('settings.logout')}</strong>

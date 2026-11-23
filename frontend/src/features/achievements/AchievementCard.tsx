@@ -4,9 +4,9 @@ import type { Achievement } from '@/lib/api/types'
 import { formatDate } from '@/lib/format'
 import { ProgressBar } from '@/components/ui/Feedback'
 import { Icon } from '@/components/ui/Icon'
-import styles from './AchievementBadge.module.css'
+import styles from './AchievementCard.module.css'
 
-export function AchievementBadge({ achievement: a, compact }: { achievement: Achievement; compact?: boolean }) {
+export function AchievementCard({ achievement: a, compact }: { achievement: Achievement; compact?: boolean }) {
   const { t } = useTranslation()
   return (
     <article

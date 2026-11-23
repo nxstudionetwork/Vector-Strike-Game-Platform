@@ -121,7 +121,7 @@ class HomeFeedView(APIView):
         today = local_today(user)
 
         continue_qs = (
-            # An unfinished run (checkpointed, not completed) — even on a game finished before.
+            # An unfinished run (checkpointed, not completed) â€” even on a game finished before.
             GameProgress.objects.filter(
                 user=user, game__status=GameStatus.LIVE, progress_percent__gt=0, progress_percent__lt=100
             )
@@ -140,6 +140,18 @@ class HomeFeedView(APIView):
         from apps.achievements.serializers import recent_unlocks
         from apps.challenges.serializers import daily_challenge_payload
 
+        today_row = DailyActivity.objects.filter(user=user, date=today).first()
+        completed_by_cat = {
+            row["game__category"]: row["n"]
+            for row in GameProgress.objects.filter(
+                user=user,
+                game__status=GameStatus.LIVE,
+                status__in=[ProgressStatus.COMPLETED, ProgressStatus.MASTERED],
+            )
+            .values("game__category")
+            .annotate(n=Count("id"))
+        }
+
         return Response(
             {
                 "stats": StatsSummarySerializer(user).data,
@@ -151,9 +163,23 @@ class HomeFeedView(APIView):
                 "daily_challenge": daily_challenge_payload(user, today),
                 "recent_achievements": recent_unlocks(user, limit=4),
                 "categories": [
-                    {"slug": c.slug, "name": c.name, "icon": c.icon, "color": c.color, "live_games": c.live_games}
+                    {
+                        "slug": c.slug,
+                        "name": c.name,
+                        "icon": c.icon,
+                        "color": c.color,
+                        "tagline": c.tagline,
+                        "live_games": c.live_games,
+                        "upcoming_games": c.upcoming_games,
+                        "completed_games": completed_by_cat.get(c.pk, 0),
+                    }
                     for c in categories_with_counts()
                 ],
+                "today": {
+                    "xp": today_row.xp if today_row else 0,
+                    "play_seconds": today_row.play_seconds if today_row else 0,
+                    "goal_minutes": user.profile.session_goal_minutes,
+                },
                 "catalog": {
                     "live_games": Game.objects.filter(status=GameStatus.LIVE).count(),
                     "upcoming_games": Game.objects.filter(status=GameStatus.COMING_SOON).count(),
@@ -264,3 +290,82 @@ class RewardHistoryView(generics.ListAPIView):
 
     def get_queryset(self):
         return RewardLedger.objects.filter(user=self.request.user)
+
+
+class StatsView(APIView):
+    """
+    Deeper statistics for the Stats page. Everything is derived from stored
+    sessions/progress; values are null when there is not enough data yet.
+    """
+
+    MIN_SESSIONS_FOR_STRENGTH = 2
+
+    def get(self, request):
+        user = request.user
+        sessions = list(
+            GameSession.objects.filter(user=user, status=SessionStatus.COMPLETED)
+            .select_related("game", "game__category")
+            .order_by("-ended_at")[:500]
+        )
+
+        def performance(s: GameSession) -> float:
+            return min(s.score / s.game.max_score, 1.0) if s.game.max_score else 0.0
+
+        progress = GameProgress.objects.filter(user=user)
+        started = progress.count()
+        finished = progress.filter(status__in=[ProgressStatus.COMPLETED, ProgressStatus.MASTERED]).count()
+
+        best = max(sessions, key=lambda s: (performance(s), s.score), default=None)
+        per_cat: dict[int, dict] = {}
+        for s in sessions:
+            cat = s.game.category
+            row = per_cat.setdefault(
+                cat.pk, {"slug": cat.slug, "name": cat.name, "icon": cat.icon, "color": cat.color, "n": 0, "perf": 0.0}
+            )
+            row["n"] += 1
+            row["perf"] += performance(s)
+
+        def cat_out(row):
+            return {k: row[k] for k in ("slug", "name", "icon", "color")} | {
+                "sessions": row["n"],
+                "average_performance": round(row["perf"] / row["n"], 4),
+            }
+
+        favorite = max(per_cat.values(), key=lambda r: r["n"], default=None)
+        eligible = [r for r in per_cat.values() if r["n"] >= self.MIN_SESSIONS_FOR_STRENGTH]
+        strongest = max(eligible, key=lambda r: r["perf"] / r["n"], default=None)
+        accuracies = [s.accuracy for s in sessions if s.accuracy is not None]
+        total_seconds = sum(s.duration_seconds for s in sessions)
+
+        return Response(
+            {
+                "stats": StatsSummarySerializer(user).data,
+                "totals": {
+                    "sessions": len(sessions),
+                    "games_played": started,
+                    "games_completed": finished,
+                    "completion_rate": round(finished / started, 4) if started else None,
+                    "play_seconds": total_seconds,
+                    "average_performance": round(sum(map(performance, sessions)) / len(sessions), 4)
+                    if sessions
+                    else None,
+                    "average_accuracy": round(sum(accuracies) / len(accuracies), 4) if accuracies else None,
+                    "average_session_seconds": round(total_seconds / len(sessions)) if sessions else None,
+                },
+                "highest_score": {
+                    "score": best.score,
+                    "max_score": best.game.max_score,
+                    "game": {"slug": best.game.slug, "title": best.game.title},
+                    "date": best.ended_at,
+                }
+                if best
+                else None,
+                "favorite_category": cat_out(favorite) if favorite else None,
+                "strongest_category": cat_out(strongest) if strongest else None,
+                "categories": sorted((cat_out(r) for r in per_cat.values()), key=lambda r: -r["sessions"]),
+                "recent_activity": [
+                    {**GameSessionSerializer(s).data, "game_title": s.game.title, "category": s.game.category.name}
+                    for s in sessions[:12]
+                ],
+            }
+        )

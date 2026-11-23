@@ -1,6 +1,6 @@
 /** Server-state hooks. Query keys are centralised so invalidation stays consistent. */
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
-import { catalogApi, meApi, type GameQuery } from './api/endpoints'
+import { catalogApi, challengeApi, meApi, type GameQuery } from './api/endpoints'
 
 export const qk = {
   categories: ['categories'] as const,
@@ -11,6 +11,9 @@ export const qk = {
   progress: (days: number) => ['me', 'progress', days] as const,
   achievements: ['me', 'achievements'] as const,
   notifications: ['me', 'notifications'] as const,
+  stats: ['me', 'stats'] as const,
+  challenges: ['me', 'challenges'] as const,
+  search: (q: string) => ['search', q] as const,
 }
 
 export const useCategories = () => useQuery({ queryKey: qk.categories, queryFn: catalogApi.categories, staleTime: 5 * 60_000 })
@@ -24,6 +27,17 @@ export const useProgress = (days: number) =>
 export const useAchievements = () => useQuery({ queryKey: qk.achievements, queryFn: meApi.achievements })
 export const useNotifications = () =>
   useQuery({ queryKey: qk.notifications, queryFn: meApi.notifications, refetchInterval: 60_000 })
+
+export const useStats = () => useQuery({ queryKey: qk.stats, queryFn: meApi.stats })
+export const useChallenges = () => useQuery({ queryKey: qk.challenges, queryFn: challengeApi.overview })
+export const useSearch = (q: string) =>
+  useQuery({
+    queryKey: qk.search(q),
+    queryFn: ({ signal }) => catalogApi.search(q, signal),
+    enabled: q.trim().length >= 2,
+    staleTime: 60_000,
+    placeholderData: keepPreviousData,
+  })
 
 /** Call after anything that changes progression (a finished game, a challenge…). */
 export function useInvalidateProgress() {

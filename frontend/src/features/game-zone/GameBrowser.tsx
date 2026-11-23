@@ -1,6 +1,6 @@
 /**
- * Search + filter + paginated grid. Filters live in the URL so they survive
- * reloads, can be shared, and work with browser back/forward.
+ * Search + filter tabs + difficulty/sort + paginated grid. All state lives in
+ * the URL, so it survives reloads, can be shared, and works with back/forward.
  */
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
@@ -11,24 +11,24 @@ import { Button } from '@/components/ui/Button'
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/Feedback'
 import { SelectField } from '@/components/ui/Field'
 import { GameGrid } from '@/components/game/GameCard'
-import { catalogApi, type GameQuery } from '@/lib/api/endpoints'
+import { catalogApi, type GameFilter, type GameQuery } from '@/lib/api/endpoints'
 import type { Difficulty } from '@/lib/api/types'
 import styles from './GameZone.module.css'
 
 const PAGE = 24
 const DIFFICULTIES: Difficulty[] = ['beginner', 'intermediate', 'advanced', 'expert']
-type Show = 'all' | 'live' | 'coming_soon' | 'favorites' | 'played'
+const FILTERS: ('all' | GameFilter)[] = ['all', 'recommended', 'new', 'popular', 'in_progress', 'completed', 'favorites']
 
-export function GameBrowser({ category }: { category?: string }) {
+export function GameBrowser({ category, hideSearch }: { category?: string; hideSearch?: boolean }) {
   const { t } = useTranslation()
   const [params, setParams] = useSearchParams()
   const q = params.get('q') ?? ''
   const difficulty = params.get('difficulty') ?? ''
-  const show = (params.get('show') as Show) || 'all'
+  const filterParam = params.get('filter') as GameFilter | null
+  const filter: 'all' | GameFilter = filterParam && FILTERS.includes(filterParam) ? filterParam : 'all'
   const sort = (params.get('sort') as GameQuery['sort']) || 'featured'
   const [search, setSearch] = useState(q)
 
-  // Debounce typing into the URL.
   useEffect(() => {
     const id = window.setTimeout(() => update('q', search.trim()), 300)
     return () => window.clearTimeout(id)
@@ -39,8 +39,9 @@ export function GameBrowser({ category }: { category?: string }) {
     setParams(
       (prev) => {
         const next = new URLSearchParams(prev)
-        if (value && !(key === 'show' && value === 'all') && !(key === 'sort' && value === 'featured')) next.set(key, value)
-        else next.delete(key)
+        const isDefault = !value || (key === 'filter' && value === 'all') || (key === 'sort' && value === 'featured')
+        if (isDefault) next.delete(key)
+        else next.set(key, value)
         return next
       },
       { replace: true },
@@ -51,9 +52,7 @@ export function GameBrowser({ category }: { category?: string }) {
     category,
     q: q || undefined,
     difficulty: difficulty || undefined,
-    status: show === 'live' || show === 'coming_soon' ? show : undefined,
-    favorites: show === 'favorites',
-    played: show === 'played',
+    filter: filter === 'all' ? undefined : filter,
     sort,
     limit: PAGE,
   }
@@ -65,37 +64,47 @@ export function GameBrowser({ category }: { category?: string }) {
     getNextPageParam: (last, pages) => (last.next ? pages.length * PAGE : undefined),
   })
 
-  const filtered = Boolean(q || difficulty || show !== 'all')
+  const narrowed = Boolean(q || difficulty)
   const items = games.data?.pages.flatMap((p) => p.results) ?? []
   const total = games.data?.pages[0]?.count ?? 0
+  const sortDisabled = filter === 'new' || filter === 'popular' || filter === 'recommended'
 
   return (
     <div className={styles.browser}>
+      <div className={styles.tabs} role="group" aria-label={t('gameZone.filterLabel')}>
+        {FILTERS.map((f) => (
+          <button
+            key={f}
+            type="button"
+            className={`${styles.tab} ${filter === f ? styles.tabActive : ''}`}
+            aria-pressed={filter === f}
+            onClick={() => update('filter', f)}
+          >
+            {t(`gameZone.filterTabs.${f}`)}
+          </button>
+        ))}
+      </div>
+
       <div className={styles.filters} role="search">
-        <label className={styles.search}>
-          <Search size={18} aria-hidden="true" />
-          <span className="visually-hidden">{t('gameZone.searchLabel')}</span>
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={t('gameZone.searchPlaceholder')}
-            maxLength={64}
-          />
-          {search && (
-            <button type="button" onClick={() => setSearch('')} aria-label={t('gameZone.clearFilters')}>
-              <X size={16} aria-hidden="true" />
-            </button>
-          )}
-        </label>
+        {!hideSearch && (
+          <label className={styles.search}>
+            <Search size={18} aria-hidden="true" />
+            <span className="visually-hidden">{t('gameZone.searchLabel')}</span>
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t('gameZone.searchPlaceholder')}
+              maxLength={64}
+            />
+            {search && (
+              <button type="button" onClick={() => setSearch('')} aria-label={t('gameZone.clearFilters')}>
+                <X size={16} aria-hidden="true" />
+              </button>
+            )}
+          </label>
+        )}
         <div className={styles.selects}>
-          <SelectField label={t('gameZone.show')} value={show} onChange={(e) => update('show', e.target.value)}>
-            <option value="all">{t('gameZone.showAll')}</option>
-            <option value="live">{t('gameZone.showLive')}</option>
-            <option value="coming_soon">{t('gameZone.showUpcoming')}</option>
-            <option value="favorites">{t('gameZone.showFavorites')}</option>
-            <option value="played">{t('gameZone.showPlayed')}</option>
-          </SelectField>
           <SelectField label={t('gameZone.difficulty')} value={difficulty} onChange={(e) => update('difficulty', e.target.value)}>
             <option value="">{t('gameZone.anyDifficulty')}</option>
             {DIFFICULTIES.map((d) => (
@@ -104,7 +113,7 @@ export function GameBrowser({ category }: { category?: string }) {
               </option>
             ))}
           </SelectField>
-          <SelectField label={t('gameZone.sort')} value={sort} onChange={(e) => update('sort', e.target.value)}>
+          <SelectField label={t('gameZone.sort')} value={sort} disabled={sortDisabled} onChange={(e) => update('sort', e.target.value)}>
             <option value="featured">{t('gameZone.sortFeatured')}</option>
             <option value="new">{t('gameZone.sortNew')}</option>
             <option value="title">{t('gameZone.sortTitle')}</option>
@@ -114,14 +123,14 @@ export function GameBrowser({ category }: { category?: string }) {
 
       {games.isPending ? (
         <div className={styles.skeletonGrid} aria-hidden="true">
-          {Array.from({ length: 6 }, (_, i) => (
-            <Skeleton key={i} height={260} radius={18} />
+          {Array.from({ length: 8 }, (_, i) => (
+            <Skeleton key={i} height={280} radius={18} />
           ))}
         </div>
       ) : games.isError ? (
         <ErrorState error={games.error} onRetry={() => games.refetch()} />
       ) : items.length === 0 ? (
-        filtered ? (
+        narrowed ? (
           <EmptyState
             icon={<Search size={26} />}
             title={t('gameZone.emptyFilteredTitle')}
@@ -131,7 +140,7 @@ export function GameBrowser({ category }: { category?: string }) {
                 variant="secondary"
                 onClick={() => {
                   setSearch('')
-                  setParams({}, { replace: true })
+                  setParams(filter === 'all' ? {} : { filter }, { replace: true })
                 }}
               >
                 {t('gameZone.clearFilters')}
@@ -139,7 +148,11 @@ export function GameBrowser({ category }: { category?: string }) {
             }
           />
         ) : (
-          <EmptyState icon={<Gamepad2 size={26} />} title={t('gameZone.emptyTitle')} body={t('gameZone.emptyBody')} />
+          <EmptyState
+            icon={<Gamepad2 size={26} />}
+            title={t('gameZone.emptyTitle')}
+            body={filter === 'all' ? t('gameZone.emptyBody') : t(`gameZone.emptyFilter.${filter}`)}
+          />
         )
       ) : (
         <>

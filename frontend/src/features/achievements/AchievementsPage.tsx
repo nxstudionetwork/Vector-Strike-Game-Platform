@@ -5,10 +5,10 @@ import { Segmented } from '@/components/ui/Controls'
 import { EmptyState, ErrorState, ProgressBar, Skeleton } from '@/components/ui/Feedback'
 import { Card, PageHeader, Section } from '@/components/ui/Surfaces'
 import { useAchievements } from '@/lib/queries'
-import { AchievementBadge } from './AchievementBadge'
+import { AchievementCard } from './AchievementCard'
 import styles from './AchievementsPage.module.css'
 
-type Filter = 'all' | 'unlocked' | 'locked'
+type Filter = 'all' | 'unlocked' | 'in_progress' | 'locked'
 const GROUP_ORDER = ['milestone', 'exploration', 'mastery', 'growth', 'consistency', 'challenge']
 
 export default function AchievementsPage() {
@@ -18,7 +18,13 @@ export default function AchievementsPage() {
 
   const groups = useMemo(() => {
     const items = (query.data?.achievements ?? []).filter((a) =>
-      filter === 'all' ? true : filter === 'unlocked' ? a.is_unlocked : !a.is_unlocked,
+      filter === 'all'
+        ? true
+        : filter === 'unlocked'
+          ? a.is_unlocked
+          : filter === 'in_progress'
+            ? !a.is_unlocked && a.progress > 0
+            : !a.is_unlocked && a.progress === 0,
     )
     const byGroup = new Map<string, typeof items>()
     for (const a of items) byGroup.set(a.group, [...(byGroup.get(a.group) ?? []), a])
@@ -57,6 +63,7 @@ export default function AchievementsPage() {
             options={[
               { value: 'all', label: t('achievements.filterAll') },
               { value: 'unlocked', label: t('achievements.filterUnlocked') },
+              { value: 'in_progress', label: t('achievements.filterInProgress') },
               { value: 'locked', label: t('achievements.filterLocked') },
             ]}
           />
@@ -68,7 +75,7 @@ export default function AchievementsPage() {
                 <ul className={styles.grid}>
                   {items.map((a) => (
                     <li key={a.slug}>
-                      <AchievementBadge achievement={a} />
+                      <AchievementCard achievement={a} />
                     </li>
                   ))}
                 </ul>

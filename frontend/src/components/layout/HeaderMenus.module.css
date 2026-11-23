@@ -1,0 +1,260 @@
+.anchor {
+  position: relative;
+}
+
+.iconButton {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--touch);
+  height: var(--touch);
+  border: 0;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--text-muted);
+  transition: background-color var(--dur-fast), color var(--dur-fast);
+}
+
+.iconButton:hover,
+.iconButton[aria-expanded='true'] {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--brand-pink);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--bg);
+  animation: pop var(--dur-med) var(--ease-spring);
+}
+
+.profileButton {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 4px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--text);
+}
+
+.profileButton:hover,
+.profileButton[aria-expanded='true'] {
+  background: var(--surface-2);
+}
+
+.profileName {
+  display: none;
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  padding-right: var(--sp-2);
+  max-width: 14ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: drop var(--dur-med) var(--ease-out);
+  transform-origin: top right;
+}
+
+.notifPanel {
+  width: min(380px, calc(100vw - 24px));
+}
+
+.menuPanel {
+  width: min(300px, calc(100vw - 24px));
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-4) var(--sp-2);
+}
+
+.panelHead h2 {
+  font-size: var(--fs-lg);
+}
+
+.textButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 var(--sp-2);
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+}
+
+.panelBody {
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  padding: 0 var(--sp-2);
+}
+
+.notifList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.center {
+  display: grid;
+  place-items: center;
+  padding: var(--sp-6);
+  color: var(--accent);
+}
+
+.emptyNote {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--sp-6) var(--sp-4);
+  text-align: center;
+  font-size: var(--fs-sm);
+}
+
+.emptyNote span {
+  color: var(--text-muted);
+}
+
+.panelFoot {
+  display: block;
+  padding: var(--sp-3);
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-weight: 600;
+  font-size: var(--fs-sm);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-4) var(--sp-3);
+}
+
+.identityText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.identityText strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.identityText code {
+  font-family: ui-monospace, monospace;
+  font-size: var(--fs-xs);
+  color: var(--text-subtle);
+}
+
+.xp {
+  padding: 0 var(--sp-4) var(--sp-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.menu {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-2);
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--sp-3);
+  border: 0;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--text);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  text-align: start;
+  text-decoration: none !important;
+}
+
+.menuItem svg {
+  color: var(--text-subtle);
+}
+
+.menuItem:hover,
+.menuItem:focus-visible {
+  background: var(--surface-2);
+}
+
+.danger,
+.danger svg {
+  color: var(--danger);
+}
+
+.sep {
+  height: 1px;
+  margin: var(--sp-2) 0;
+  background: var(--border);
+}
+
+@media (min-width: 900px) {
+  .profileName {
+    display: block;
+  }
+}
+
+@media (max-width: 479px) {
+  .panel {
+    position: fixed;
+    top: calc(var(--topbar-h) + 6px);
+    left: 12px;
+    right: 12px;
+    width: auto;
+  }
+}
+
+@keyframes drop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.4);
+  }
+}

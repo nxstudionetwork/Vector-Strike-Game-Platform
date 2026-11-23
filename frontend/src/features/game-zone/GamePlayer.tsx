@@ -12,6 +12,7 @@ import { playApi } from '@/lib/api/endpoints'
 import type { GameDetail, GameSession, SessionResult } from '@/lib/api/types'
 import { useInvalidateProgress } from '@/lib/queries'
 import { useAuth, useUser } from '@/features/auth/AuthProvider'
+import { useConfirm } from '@/components/feedback/ConfirmDialog'
 import { PageLoader } from '@/components/ui/Feedback'
 import type { GameModuleDefinition, GameResult } from '@/games/types'
 import { ResultScreen } from './ResultScreen'
@@ -35,16 +36,20 @@ export function GamePlayer({
   session,
   resumeState,
   onClose,
+  onPlayAgain,
 }: {
   game: GameDetail
   module: GameModuleDefinition
   session: GameSession
   resumeState: Record<string, unknown>
   onClose: () => void
+  /** Starts a fresh session of the same game (the parent re-keys this player). */
+  onPlayAgain: () => void
 }) {
   const { t } = useTranslation()
   const user = useUser()
   const { setUser } = useAuth()
+  const confirm = useConfirm()
   const invalidate = useInvalidateProgress()
   const reducedMotion = useMotionConfig()
   const [phase, setPhase] = useState<'playing' | 'submitting' | 'result' | 'rejected'>('playing')
@@ -88,18 +93,21 @@ export function GamePlayer({
     [session.id, setUser, user, invalidate, t],
   )
 
-  const onExit = useCallback(() => {
-    if (phase === 'playing' && !window.confirm(t('game.exitConfirm'))) return
-    if (phase === 'playing') void playApi.abandon(session.id).catch(() => undefined)
+  const onExit = useCallback(async () => {
+    if (phase === 'playing') {
+      const ok = await confirm({ title: t('game.exit'), body: t('game.exitConfirm'), confirmLabel: t('game.exit'), danger: true })
+      if (!ok) return
+      void playApi.abandon(session.id).catch(() => undefined)
+    }
     void invalidate()
     onClose()
-  }, [phase, session.id, onClose, invalidate, t])
+  }, [phase, session.id, onClose, invalidate, t, confirm])
 
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-label={game.title}>
       <header className={styles.bar}>
         <span className={styles.title}>{game.title}</span>
-        <button type="button" className={styles.exit} onClick={onExit} aria-label={t('game.exit')}>
+        <button type="button" className={styles.exit} onClick={() => void onExit()} aria-label={t('game.exit')}>
           <X size={22} aria-hidden="true" />
         </button>
       </header>
@@ -114,14 +122,20 @@ export function GamePlayer({
                 reducedMotion={reducedMotion}
                 onCheckpoint={onCheckpoint}
                 onComplete={onComplete}
-                onExit={onExit}
+                onExit={() => void onExit()}
               />
             </Suspense>
           </GameErrorBoundary>
         )}
         {phase === 'submitting' && <PageLoader label={t('game.submitting')} />}
         {(phase === 'result' || phase === 'rejected') && (
-          <ResultScreen game={game} result={result} rejection={phase === 'rejected' ? rejection : undefined} onClose={onClose} />
+          <ResultScreen
+            game={game}
+            result={result}
+            rejection={phase === 'rejected' ? rejection : undefined}
+            onClose={onClose}
+            onPlayAgain={onPlayAgain}
+          />
         )}
       </div>
     </div>

@@ -8,6 +8,8 @@ import '@/styles/global.css'
 import '@/i18n'
 import { ApiError } from '@/lib/api/client'
 import { AuthProvider } from '@/features/auth/AuthProvider'
+import { ConfirmProvider } from '@/components/feedback/ConfirmDialog'
+import { ToastProvider } from '@/components/feedback/Toast'
 import { PreferencesSync } from '@/features/preferences/PreferencesSync'
 import { router } from '@/app/router'
 
@@ -26,7 +28,11 @@ createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <PreferencesSync>
-          <RouterProvider router={router} />
+          <ToastProvider>
+            <ConfirmProvider>
+              <RouterProvider router={router} />
+            </ConfirmProvider>
+          </ToastProvider>
         </PreferencesSync>
       </AuthProvider>
     </QueryClientProvider>

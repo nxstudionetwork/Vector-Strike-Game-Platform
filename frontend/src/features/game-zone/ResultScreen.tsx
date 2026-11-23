@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { animate, motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { AlertTriangle, Coins, Sparkles, Star, Target, Trophy, Zap } from 'lucide-react'
+import { AlertTriangle, ArrowRight, Coins, RotateCcw, Sparkles, Star, Target, Trophy, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Icon } from '@/components/ui/Icon'
 import type { GameDetail, SessionResult } from '@/lib/api/types'
 import { formatDuration, formatNumber, formatPercent } from '@/lib/format'
 import { useMotionConfig } from '@/lib/useReducedMotion'
+import { useGames } from '@/lib/queries'
 import styles from './GamePlayer.module.css'
 
 function CountUp({ to }: { to: number }) {
@@ -27,14 +28,19 @@ export function ResultScreen({
   result,
   rejection,
   onClose,
+  onPlayAgain,
 }: {
   game: GameDetail
   result: SessionResult | null
   rejection?: string
   onClose: () => void
+  onPlayAgain: () => void
 }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  // "Next game": the first deterministic recommendation that isn't this game.
+  const recs = useGames({ filter: 'recommended', limit: 4 })
+  const next = recs.data?.results.find((g) => g.slug !== game.slug && !g.is_locked)
 
   if (rejection || !result) {
     return (
@@ -79,6 +85,10 @@ export function ResultScreen({
           <span>{t('result.time')}</span>
           <strong>{formatDuration(s.duration_seconds)}</strong>
         </div>
+        <div>
+          <span>{t('result.bestScore')}</span>
+          <strong>{formatNumber(Math.max(s.score, game.progress?.best_score ?? 0))}</strong>
+        </div>
       </div>
 
       <div className={styles.rewards}>
@@ -93,7 +103,7 @@ export function ResultScreen({
           <div className={styles.rewardCoins}>
             <Coins size={22} aria-hidden="true" />
             <strong>+{formatNumber(result.coins_awarded)}</strong>
-            <span>{t('result.coinsEarned')}</span>
+            <span>{t('result.pointsEarned')}</span>
           </div>
         )}
       </div>
@@ -147,10 +157,28 @@ export function ResultScreen({
       )}
 
       <div className={styles.resultActions}>
-        <Button variant="glow" onClick={onClose}>
-          {t('common.continue')}
+        <Button variant="glow" icon={<RotateCcw size={18} aria-hidden="true" />} onClick={onPlayAgain}>
+          {t('result.playAgain')}
         </Button>
-        <Button variant="secondary" onClick={() => navigate('/game-zone')}>
+        {next && (
+          <Button
+            variant="secondary"
+            iconEnd={<ArrowRight size={18} aria-hidden="true" />}
+            onClick={() => {
+              onClose()
+              navigate(`/game/${next.slug}`)
+            }}
+          >
+            {t('result.nextGame')}
+          </Button>
+        )}
+        <Button
+          variant="ghost"
+          onClick={() => {
+            onClose()
+            navigate('/game-zone')
+          }}
+        >
           {t('result.backToZone')}
         </Button>
       </div>

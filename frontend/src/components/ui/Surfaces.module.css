@@ -29,6 +29,7 @@
 
 .sectionHead {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--sp-4);
@@ -116,6 +117,20 @@
   font-weight: 700;
   font-size: var(--fs-xl);
   line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+/* Very small phones: stack icon above the value so 2-up grids still fit. */
+@media (max-width: 359px) {
+  .stat {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-2);
+    padding: var(--sp-3);
+  }
+  .statValue {
+    font-size: var(--fs-lg);
+  }
 }
 
 .statLabel {

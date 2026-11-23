@@ -43,7 +43,8 @@ export function ActivityChart({ days }: { days: ActivityDay[] }) {
           <span key={d.date}>{i % labelEvery === 0 ? formatDay(d.date, days.length > 7 ? { day: 'numeric' } : { weekday: 'short' }) : ''}</span>
         ))}
       </div>
-      <table className="visually-hidden">
+      <div className="visually-hidden">
+      <table>
         <caption>{t('progress.chartLabel', { days: days.length })}</caption>
         <tbody>
           {days.map((d) => (
@@ -54,6 +55,7 @@ export function ActivityChart({ days }: { days: ActivityDay[] }) {
           ))}
         </tbody>
       </table>
+      </div>
     </figure>
   )
 }

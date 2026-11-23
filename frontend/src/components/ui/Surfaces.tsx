@@ -60,7 +60,7 @@ export function PageHeader({ title, subtitle, action }: { title: ReactNode; subt
   )
 }
 
-export function StatTile({
+export function StatCard({
   icon,
   label,
   value,

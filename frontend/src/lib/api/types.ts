@@ -39,6 +39,7 @@ export interface PlayerSettings {
   notify_achievements: boolean
   notify_daily_challenge: boolean
   notify_streak: boolean
+  notify_platform: boolean
   profile_visible: boolean
 }
 
@@ -109,6 +110,7 @@ export interface GameCard {
   skills: string[]
   mechanics: string[]
   is_featured: boolean
+  published_at: string | null
   is_locked: boolean
   is_favorite: boolean
   progress: GameProgressRef | null
@@ -121,7 +123,6 @@ export interface GameDetail extends GameCard {
   base_coins: number
   max_score: number
   metadata: Record<string, unknown>
-  published_at: string | null
 }
 
 export interface Paginated<T> {
@@ -170,7 +171,8 @@ export interface HomeFeed {
   new_games: GameCard[]
   daily_challenge: DailyChallenge | null
   recent_achievements: Achievement[]
-  categories: (CategoryRef & { live_games: number })[]
+  categories: (CategoryRef & { tagline: string; live_games: number; upcoming_games: number; completed_games: number })[]
+  today: { xp: number; play_seconds: number; goal_minutes: number }
   catalog: { live_games: number; upcoming_games: number }
 }
 
@@ -234,4 +236,52 @@ export interface AppNotification {
   data: Record<string, unknown>
   is_read: boolean
   created_at: string
+}
+
+export interface CategoryDetail extends Category {
+  progress: { live_games: number; completed_games: number; played_games: number; percent: number }
+}
+
+export interface SearchResults {
+  query: string
+  games: GameCard[]
+  categories: Category[]
+  challenges: { id: number; date: string; title: string; game_slug: string; is_today: boolean; completed: boolean }[]
+}
+
+export interface CategoryStat extends CategoryRef {
+  sessions: number
+  average_performance: number
+}
+
+export interface StatsOverview {
+  stats: StatsSummary
+  totals: {
+    sessions: number
+    games_played: number
+    games_completed: number
+    completion_rate: number | null
+    play_seconds: number
+    average_performance: number | null
+    average_accuracy: number | null
+    average_session_seconds: number | null
+  }
+  highest_score: { score: number; max_score: number; game: { slug: string; title: string }; date: string } | null
+  favorite_category: CategoryStat | null
+  strongest_category: CategoryStat | null
+  categories: CategoryStat[]
+  recent_activity: (GameSession & { game_title: string; category: string })[]
+}
+
+export interface ChallengeOverview {
+  today: DailyChallenge | null
+  history: {
+    id: number
+    date: string
+    title: string
+    xp_reward: number
+    game: { slug: string; title: string }
+    completed: boolean
+  }[]
+  total_completed: number
 }

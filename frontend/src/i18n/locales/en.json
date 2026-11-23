@@ -40,7 +40,25 @@
     "notifications": "Notifications",
     "skipToContent": "Skip to main content",
     "openProfile": "Open your profile",
-    "achievementsShort": "Trophies"
+    "achievementsShort": "Trophies",
+    "dailyChallenge": "Daily Challenge",
+    "challengeShort": "Challenge",
+    "stats": "Stats",
+    "favorites": "Favourites",
+    "more": "More",
+    "moreTitle": "More",
+    "help": "Help",
+    "logout": "Log out",
+    "groups": {
+      "main": "Main",
+      "progress": "Progress",
+      "personal": "Personal"
+    },
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar",
+    "openProfileMenu": "Open profile menu",
+    "accessibility": "Accessibility",
+    "gameZoneShort": "Games"
   },
   "splash": {
     "loading": "Preparing your universe"
@@ -196,7 +214,31 @@
       "achievements": "Achievements",
       "streak": "Day streak",
       "coins": "Coins"
-    }
+    },
+    "welcomeBack": "Welcome back, {{name}}!",
+    "welcomeNew": "Welcome, {{name}}!",
+    "percentToNext": "{{percent}} to level {{level}}",
+    "startFirstTitle": "Start your first challenge",
+    "startFirstBody": "Pick a world in the Game Zone and play your first game to start earning XP.",
+    "exploreGameZone": "Explore Game Zone",
+    "todayChallenge": "Today's challenge",
+    "challengeAsk": "Can you beat today's challenge?",
+    "reward": "Reward",
+    "achievementProgress": "+ achievement progress",
+    "startChallenge": "Start challenge",
+    "challengeComplete": "Challenge complete",
+    "gzTagline": "Explore games. Build skills. Level up.",
+    "discoverTitle": "Discover",
+    "discoverNew": "New games",
+    "discoverWorlds": "Worlds to explore",
+    "discoverChallenges": "Daily challenges",
+    "discoverChallengesBody": "See today's challenge and your recent results.",
+    "viewChallenges": "Open challenges",
+    "dailyGoal": "Daily goal",
+    "dailyGoalValue": "{{played}} of {{goal}} min played today",
+    "dailyGoalDone": "Daily goal reached!",
+    "categoryProgress": "World progress",
+    "categoryProgressEmpty": "Complete games to build world progress."
   },
   "gameZone": {
     "title": "Game Zone",
@@ -231,7 +273,33 @@
     "upcomingCount": "{{count}} coming soon",
     "noGamesYet": "Games coming soon",
     "categoryNotFound": "This world doesn't exist.",
-    "backToZone": "Back to Game Zone"
+    "backToZone": "Back to Game Zone",
+    "tagline": "Play. Learn. Level up.",
+    "filterLabel": "Filter games",
+    "filterTabs": {
+      "all": "All",
+      "recommended": "Recommended",
+      "new": "New",
+      "popular": "Popular",
+      "completed": "Completed",
+      "favorites": "Favourites",
+      "in_progress": "In progress"
+    },
+    "emptyFilter": {
+      "recommended": "Recommendations appear once games are live in your worlds.",
+      "new": "No games were added in the last 30 days.",
+      "popular": "Popular games appear once players start playing.",
+      "completed": "Games you finish will appear here.",
+      "favorites": "Tap the heart on any game to save it here.",
+      "in_progress": "Games you start but don't finish appear here."
+    },
+    "categoryProgress": "{{name}} progress",
+    "totalGames": "Live games",
+    "completedGames": "Completed",
+    "playedGames": "Played",
+    "recommendedInWorld": "Recommended in this world",
+    "allGames": "All games",
+    "comingSoonCount": "{{count}} more coming soon"
   },
   "difficulty": {
     "beginner": "Beginner",
@@ -267,7 +335,16 @@
       "in_progress": "In progress",
       "completed": "Completed",
       "mastered": "Mastered"
-    }
+    },
+    "stateNew": "New",
+    "stateComplete": "Completed",
+    "statePercent": "{{percent}}% complete",
+    "stateLocked": "Locked",
+    "startGame": "Start game",
+    "xpReward": "XP reward",
+    "difficultyLabel": "Difficulty",
+    "timeLabel": "Estimated time",
+    "progressLabel": "Progress"
   },
   "result": {
     "title": "Mission complete",
@@ -285,7 +362,12 @@
     "backToZone": "Back to Game Zone",
     "home": "Home",
     "rejected": "We couldn't save that result",
-    "rejectedBody": "{{reason}}"
+    "rejectedBody": "{{reason}}",
+    "playAgain": "Play again",
+    "nextGame": "Next game",
+    "pointsEarned": "Points",
+    "bestScore": "Best score",
+    "starting": "Starting…"
   },
   "progress": {
     "title": "Progress",
@@ -350,7 +432,8 @@
     "reward": "+{{xp}} XP",
     "lockedLabel": "Locked",
     "unlockedLabel": "Unlocked",
-    "empty": "No achievements in this view."
+    "empty": "No achievements in this view.",
+    "filterInProgress": "In progress"
   },
   "profile": {
     "title": "Profile",
@@ -369,7 +452,14 @@
     "privacyPublic": "Your player name, avatar and level can be seen by other players.",
     "playStyle": "Play style",
     "dailyGoal": "Daily goal",
-    "goalMinutes": "{{count}} minutes"
+    "goalMinutes": "{{count}} minutes",
+    "favoriteCategory": "Favourite world",
+    "currentStreak": "Current streak",
+    "recentActivity": "Recent activity",
+    "recentEmpty": "No activity yet. Your games will show up here.",
+    "editPreferences": "Edit preferences",
+    "preferences": "Preferences",
+    "none": "—"
   },
   "settings": {
     "title": "Settings",
@@ -439,7 +529,20 @@
     "deleteConfirmTitle": "Delete your account?",
     "deleteConfirmBody": "Enter your password to permanently delete your account and all of your progress.",
     "deleteConfirmCta": "Delete permanently",
-    "updated": "Settings saved"
+    "updated": "Settings saved",
+    "groups": {
+      "account": "Account",
+      "appearance": "Appearance",
+      "gameplay": "Gameplay",
+      "accessibility": "Accessibility",
+      "notifications": "Notifications",
+      "language": "Language & region",
+      "privacy": "Privacy",
+      "actions": "Account actions"
+    },
+    "notifyPlatform": "New games & announcements",
+    "editProfile": "Edit profile",
+    "security": "Security"
   },
   "notifications": {
     "title": "Notifications",
@@ -447,7 +550,9 @@
     "empty": "You're all caught up.",
     "emptyBody": "Achievements, level-ups and challenge results will appear here.",
     "unread_one": "{{count}} unread notification",
-    "unread_other": "{{count}} unread notifications"
+    "unread_other": "{{count}} unread notifications",
+    "viewAll": "View all notifications",
+    "panelTitle": "Notifications"
   },
   "categories": {
     "mathematics": "Mathematics",
@@ -476,5 +581,131 @@
     "boundaryTitle": "This screen crashed",
     "boundaryBody": "Something unexpected happened. Reloading usually fixes it.",
     "reload": "Reload"
+  },
+  "search": {
+    "label": "Search Vector Strike",
+    "placeholder": "Search games, worlds, challenges…",
+    "open": "Open search",
+    "close": "Close search",
+    "games": "Games",
+    "categories": "Worlds",
+    "challenges": "Challenges",
+    "minChars": "Type at least 2 characters to search.",
+    "noResults": "No results found.",
+    "noResultsBody": "Try another search.",
+    "today": "Today",
+    "completed": "Completed",
+    "shortcut": "Press / to search",
+    "searching": "Searching…",
+    "clear": "Clear search"
+  },
+  "toast": {
+    "favoriteAdded": "Added to favourites",
+    "favoriteRemoved": "Removed from favourites",
+    "settingsSaved": "Settings saved",
+    "profileSaved": "Profile updated",
+    "dismiss": "Dismiss"
+  },
+  "footer": {
+    "help": "Help",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "accessibility": "Accessibility",
+    "copyright": "© {{year}} Vector Strike"
+  },
+  "challenge": {
+    "title": "Daily Challenge",
+    "subtitle": "One new challenge every day. Beat it to earn bonus XP.",
+    "today": "Today's challenge",
+    "noneTitle": "No challenge today",
+    "noneBody": "Daily challenges are published by the Vector Strike team once games are live. Check back soon.",
+    "history": "Recent challenges",
+    "historyEmpty": "No past challenges yet.",
+    "completed": "Completed",
+    "missed": "Not completed",
+    "totalCompleted_one": "{{count}} challenge completed",
+    "totalCompleted_other": "{{count}} challenges completed",
+    "howTitle": "How daily challenges work",
+    "how1": "A new challenge unlocks every day at midnight in your time zone.",
+    "how2": "Play the challenge game and meet the target to complete it.",
+    "how3": "Each challenge rewards bonus XP and coins once.",
+    "requirementScore": "Score at least {{value}}",
+    "requirementAccuracy": "Reach {{value}} accuracy",
+    "playGame": "Play {{title}}"
+  },
+  "stats": {
+    "title": "Stats",
+    "subtitle": "The numbers behind your progress.",
+    "totalSessions": "Games played",
+    "playTime": "Total play time",
+    "averageScore": "Average score",
+    "averageAccuracy": "Average accuracy",
+    "highestScore": "Highest score",
+    "completionRate": "Completion rate",
+    "favoriteCategory": "Favourite world",
+    "strongestCategory": "Strongest world",
+    "avgSession": "Average session",
+    "notEnough": "Not enough data yet",
+    "strongestHint": "Needs 2 or more games in a world",
+    "byCategory": "Performance by world",
+    "recent": "Recent activity",
+    "empty": "Play a few games to see your stats here.",
+    "ofMax": "of {{max}}",
+    "sessions_one": "{{count}} game",
+    "sessions_other": "{{count}} games",
+    "avgPerformance": "{{value}} average score"
+  },
+  "favorites": {
+    "title": "Favourites",
+    "subtitle": "Games you saved for later.",
+    "emptyTitle": "No favourites yet.",
+    "emptyBody": "Save games you want to play later.",
+    "remove": "Remove"
+  },
+  "help": {
+    "title": "Help",
+    "subtitle": "Everything you need to know to get started.",
+    "faq": [
+      {
+        "q": "How do I earn XP?",
+        "a": "Play games in the Game Zone. Every completed game earns XP based on how well you did. Your first clear of a game earns a bonus, and so does beating your personal best."
+      },
+      {
+        "q": "How do levels work?",
+        "a": "XP adds up to levels. Early levels come quickly; higher levels need more practice. Your level never goes down."
+      },
+      {
+        "q": "What is a streak?",
+        "a": "Your streak counts the days in a row you have played. Play at least one game today to keep it going. Days follow the time zone in your Settings."
+      },
+      {
+        "q": "How do daily challenges work?",
+        "a": "Each day can have one challenge linked to a game. Meet its target (for example a minimum score) to earn bonus XP and coins once."
+      },
+      {
+        "q": "Why can't I open some games?",
+        "a": "Some games unlock at a higher level, and some are still being built. The game page always tells you why."
+      },
+      {
+        "q": "Who can see my profile?",
+        "a": "Your profile is private by default. Players under 13 always have private profiles. Your email and age are never shown to other players."
+      },
+      {
+        "q": "How do I delete my account?",
+        "a": "Go to Settings, then Account actions, then Delete account. This permanently removes your progress."
+      }
+    ]
+  },
+  "a11y": {
+    "title": "Accessibility",
+    "subtitle": "Vector Strike is built to be playable by as many learners as possible.",
+    "points": [
+      "Every screen works with a keyboard, and focus is always visible.",
+      "Screen readers get labels for icons, progress bars and charts (charts include a data table).",
+      "You can reduce motion, enlarge text and turn on high contrast in Settings.",
+      "Status is never shown by colour alone: icons and text always accompany it.",
+      "Touch targets are at least 44 pixels on phones and tablets."
+    ],
+    "settingsLink": "Open accessibility settings"
   }
 }

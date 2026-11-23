@@ -61,7 +61,7 @@
 }
 
 .range {
-  min-width: 220px;
+  width: min(100%, 300px);
 }
 
 .range legend {
@@ -204,4 +204,8 @@
   .grid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
+}
+
+.pct {
+  color: var(--text);
 }

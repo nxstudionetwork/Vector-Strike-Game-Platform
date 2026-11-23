@@ -33,6 +33,8 @@ api = [
     path("me/home/", progression.HomeFeedView.as_view()),
     path("me/progress/", progression.ProgressOverviewView.as_view()),
     path("me/rewards/", progression.RewardHistoryView.as_view()),
+    path("me/stats/", progression.StatsView.as_view()),
+    path("search/", catalog.SearchView.as_view()),
     path("me/achievements/", achievements.AchievementListView.as_view()),
     path("me/achievements/seen/", achievements.MarkAchievementsSeenView.as_view()),
     path("me/notifications/", notifications.NotificationListView.as_view()),
@@ -49,6 +51,7 @@ api = [
     path("play/sessions/<uuid:pk>/complete/", progression.CompleteSessionView.as_view()),
     path("play/sessions/<uuid:pk>/abandon/", progression.AbandonSessionView.as_view()),
     # Daily challenge
+    path("challenges/", challenges.ChallengeOverviewView.as_view()),
     path("challenges/today/", challenges.TodayChallengeView.as_view()),
 ]
 

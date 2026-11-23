@@ -53,6 +53,7 @@ class GameCardSerializer(serializers.ModelSerializer):
             "skills",
             "mechanics",
             "is_featured",
+            "published_at",
             "is_locked",
             "is_favorite",
             "progress",
@@ -83,5 +84,4 @@ class GameDetailSerializer(GameCardSerializer):
             "base_coins",
             "max_score",
             "metadata",
-            "published_at",
         ]

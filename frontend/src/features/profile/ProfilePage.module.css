@@ -67,11 +67,8 @@
 }
 
 .level {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  margin-top: var(--sp-1);
-  max-width: 420px;
+  margin-top: var(--sp-2);
+  max-width: 440px;
 }
 
 .levelBadge {
@@ -244,5 +241,73 @@
   .editBtn {
     grid-column: auto;
     align-self: start;
+  }
+}
+
+.columns {
+  display: grid;
+  gap: var(--sp-8);
+}
+
+.recent {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.recent li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--fs-sm);
+}
+
+.recent li:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.recent li div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.recent a {
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent li div span {
+  color: var(--text-subtle);
+  font-size: var(--fs-xs);
+}
+
+.xp {
+  color: var(--brand-cyan);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.prefsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+@media (min-width: 1024px) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 }

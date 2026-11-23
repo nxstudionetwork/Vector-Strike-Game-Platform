@@ -1,0 +1,159 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  height: var(--topbar-h);
+  padding: 0 var(--gutter) 0 var(--sp-3);
+  background: var(--surface-glass);
+  backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid var(--border);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: var(--r-md);
+  text-decoration: none !important;
+}
+
+.brandFull {
+  display: none;
+}
+
+.center {
+  display: none;
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  margin-left: auto;
+  min-width: 0;
+}
+
+.iconButton {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: var(--touch);
+  height: var(--touch);
+  border: 0;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.iconButton:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.toggle {
+  display: none;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+  text-decoration: none !important;
+}
+
+.pill svg {
+  flex-shrink: 0;
+}
+
+.flameOn {
+  color: #fb923c;
+}
+
+.levelPill {
+  background: var(--brand-gradient);
+  color: #fff;
+  border-color: transparent;
+}
+
+.searchSheet {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-2) 0 var(--sp-3);
+  background: var(--surface);
+  animation: sheetIn var(--dur-fast) var(--ease-out);
+}
+
+.searchSheet > div:first-child {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  max-width: none;
+}
+
+@media (max-width: 359px) {
+  .pill:not(.levelPill) {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .toggle {
+    display: grid;
+  }
+  .center {
+    display: flex;
+  }
+  .searchButton {
+    display: none;
+  }
+  .right {
+    margin-left: 0;
+  }
+  .searchSheet {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .brandFull {
+    display: block;
+  }
+  .brandMark {
+    display: none;
+  }
+  .header {
+    gap: var(--sp-6);
+  }
+}
+
+@keyframes sheetIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}

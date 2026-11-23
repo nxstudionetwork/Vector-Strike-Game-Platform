@@ -4,6 +4,10 @@ import type {
   Achievement,
   AppNotification,
   Category,
+  CategoryDetail,
+  ChallengeOverview,
+  SearchResults,
+  StatsOverview,
   DailyChallenge,
   GameCard,
   GameDetail,
@@ -62,11 +66,14 @@ export const meApi = {
   deleteAccount: (password: string) => api<void>('/me/', { method: 'DELETE', body: { password } }),
   home: () => api<HomeFeed>('/me/home/'),
   progress: (days = 14) => api<ProgressOverview>(`/me/progress/?days=${days}`),
+  stats: () => api<StatsOverview>('/me/stats/'),
   achievements: () => api<{ total: number; unlocked: number; achievements: Achievement[] }>('/me/achievements/'),
   notifications: () => api<Paginated<AppNotification> & { unread: number }>('/me/notifications/?limit=30'),
   markNotificationsRead: (ids?: number[]) =>
     api<{ unread: number }>('/me/notifications/read/', { method: 'POST', body: ids ? { ids } : {} }),
 }
+
+export type GameFilter = 'recommended' | 'new' | 'popular' | 'completed' | 'in_progress' | 'favorites'
 
 export interface GameQuery {
   category?: string
@@ -75,6 +82,7 @@ export interface GameQuery {
   status?: 'live' | 'coming_soon'
   favorites?: boolean
   played?: boolean
+  filter?: GameFilter
   sort?: 'featured' | 'new' | 'title'
   limit?: number
   offset?: number
@@ -92,9 +100,11 @@ function toQuery(params: GameQuery): string {
 
 export const catalogApi = {
   categories: () => api<Category[]>('/categories/'),
-  category: (slug: string) => api<Category>(`/categories/${encodeURIComponent(slug)}/`),
+  category: (slug: string) => api<CategoryDetail>(`/categories/${encodeURIComponent(slug)}/`),
   games: (params: GameQuery = {}) => api<Paginated<GameCard>>(`/games/${toQuery(params)}`),
   game: (slug: string) => api<GameDetail>(`/games/${encodeURIComponent(slug)}/`),
+  search: (q: string, signal?: AbortSignal) =>
+    api<SearchResults>(`/search/?q=${encodeURIComponent(q)}`, { signal }),
   favorite: (slug: string, on: boolean) =>
     api<{ is_favorite: boolean }>(`/games/${encodeURIComponent(slug)}/favorite/`, { method: on ? 'POST' : 'DELETE' }),
 }
@@ -124,4 +134,5 @@ export const playApi = {
 
 export const challengeApi = {
   today: () => api<{ challenge: DailyChallenge | null }>('/challenges/today/'),
+  overview: () => api<ChallengeOverview>('/challenges/'),
 }
